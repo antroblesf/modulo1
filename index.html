@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase Definitiva: Productividad en Office con ChatGPT</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --praxia-dark-teal: #0d3d3d;
+            --praxia-green: #8BC34A;
+            --praxia-light-bg: #f8f9fa;
+            --praxia-text: #212529;
+            --praxia-accent-bg: #f0f7eb;
+            --soft-yellow-bg: #fffbe6;
+            --soft-yellow-border: #ffe58f;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--praxia-light-bg);
+            color: var(--praxia-text);
+            overflow: hidden;
+            height: 100vh; width: 100vw;
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        #presentation-container {
+            width: 95vw; height: 95vh;
+            max-width: 1400px; max-height: 800px;
+            background: white; border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+            display: flex; flex-direction: column;
+            overflow: hidden; border: 1px solid #dee2e6;
+        }
+
+        header {
+            padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid #e9ecef; flex-shrink: 0;
+        }
+        header h1 { font-size: 1.1rem; font-weight: 600; color: #495057; }
+        header .logo { font-weight: 700; font-size: 1.5rem; color: var(--praxia-dark-teal); }
+        header .logo span { color: var(--praxia-green); }
+
+        #progress-bar { width: 0%; height: 4px; background: var(--praxia-green); transition: width 0.4s ease; }
+
+        main { flex-grow: 1; width: 100%; overflow: hidden; position: relative; }
+        .slides-wrapper { display: flex; height: 100%; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        .slide {
+            flex-shrink: 0; width: 100%; height: 100%;
+            padding: 2rem 4rem; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; text-align: center;
+        }
+        
+        @keyframes contentFadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        .slide > * { animation: contentFadeIn 0.7s ease-out forwards; }
+        
+        .slide h2 { font-size: clamp(2rem, 5vw, 3rem); font-weight: 700; color: var(--praxia-dark-teal); margin-bottom: 1rem; }
+        .slide h3 { font-size: clamp(1.2rem, 3vw, 1.5rem); font-weight: 400; color: #495057; margin-bottom: 2rem; max-width: 850px; }
+        .slide p { font-size: clamp(1rem, 2.5vw, 1.1rem); line-height: 1.8; max-width: 800px; margin-bottom: 1.5rem; }
+        
+        .prompt-box {
+            background-color: var(--praxia-accent-bg); padding: 1.5rem; border-radius: 12px; text-align: left;
+            width: 100%; max-width: 850px; border: 1px solid #d1e7dd;
+        }
+        .prompt-box .prompt-title { font-weight: 600; color: var(--praxia-dark-teal); margin-bottom: 1rem; font-size: 1.1rem; }
+        .prompt-box code { font-family: 'SF Mono', 'Courier New', monospace; font-size: 1rem; line-height: 1.6; display: block; }
+        .prompt-box code span { color: #555; }
+        
+        .comparison-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; width: 100%; max-width: 1000px; }
+        .comparison-box { padding: 1.5rem; border-radius: 12px; border: 1px solid; }
+        .before { border-color: #f5c6cb; background-color: #f8d7da; }
+        .after { border-color: #c3e6cb; background-color: #d4edda; }
+        .comparison-box h4 { font-size: 1.2rem; margin-bottom: 1rem; font-weight: 600; }
+        .comparison-box code { font-family: 'SF Mono', 'Courier New', monospace; font-size: 0.95rem; text-align: left; display: block; }
+
+        #title-slide { background-color: #fff; }
+        #title-slide h2 { font-size: clamp(2.5rem, 5vw, 3.5rem); }
+        #title-slide h3 { color: var(--praxia-green); font-weight: 600; }
+        #title-slide .subtitle { color: #6c757d; font-size: 1.1rem; }
+
+        .special-note-icon { color: var(--praxia-green); font-size: 3.5rem; margin-bottom: 1rem; }
+        
+        .share-screen-note {
+            background-color: var(--soft-yellow-bg); border: 1px solid var(--soft-yellow-border);
+            border-radius: 16px; padding: 1.5rem 2rem; margin-top: 2rem; max-width: 800px;
+            display: flex; align-items: center; gap: 1.5rem; text-align: left;
+        }
+        .share-screen-note svg { width: 48px; height: 48px; flex-shrink: 0; color: #f57c00; }
+        .share-screen-note .note-text h4 { margin: 0 0 0.25rem 0; color: #5d4037; font-size: 1.1rem; }
+        .share-screen-note .note-text p { margin: 0; font-size: 1rem; color: #6d4c41; line-height: 1.5; }
+
+        .two-column-layout { display: flex; gap: 3rem; width: 100%; align-items: center; text-align: left; }
+        .column { flex: 1; }
+        .column .icon { width: 80px; height: 80px; color: var(--praxia-green); margin-bottom: 1rem; }
+        .column h4 { font-size: 1.8rem; color: var(--praxia-dark-teal); margin-bottom: 0.5rem; }
+
+        .ceto-slide {
+            background-image: radial-gradient(rgba(0,0,0,0.05) 0.5px, transparent 0.5px);
+            background-size: 15px 15px;
+        }
+        .color-c { color: #0288d1; font-weight: bold; }
+        .color-e { color: #d32f2f; font-weight: bold; }
+        .color-t { color: #388e3c; font-weight: bold; }
+        .color-o { color: #f57c00; font-weight: bold; }
+
+        footer {
+            padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center;
+            border-top: 1px solid #e9ecef; flex-shrink: 0;
+        }
+        #slide-counter { font-size: 1rem; color: #6c757d; }
+        .nav-buttons button {
+            background-color: var(--praxia-dark-teal); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 10px;
+            font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; margin-left: 1rem;
+        }
+        .nav-buttons button:hover:not(:disabled) { background-color: #1a5957; transform: translateY(-3px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .nav-buttons button:disabled { background-color: #ced4da; cursor: not-allowed; }
+
+        #source-toast {
+            visibility: hidden; min-width: 280px; max-width: 90%; background-color: #333; color: #fff; text-align: center;
+            border-radius: 8px; padding: 12px 16px; position: fixed; z-index: 10; left: 50%;
+            transform: translateX(-50%); bottom: 30px; font-size: 0.9rem; opacity: 0;
+            transition: visibility 0s 0.5s, opacity 0.5s, bottom 0.5s;
+            line-height: 1.4;
+        }
+        #source-toast.show {
+            visibility: visible; opacity: 1; bottom: 50px;
+            transition: visibility 0s, opacity 0.5s, bottom 0.5s;
+        }
+        
+        @media (max-width: 992px) {
+            .slide { padding: 1.5rem 2rem; }
+            .two-column-layout, .comparison-grid { flex-direction: column; text-align: center; grid-template-columns: 1fr; }
+            .column { align-items: center; text-align: center; }
+        }
+        @media (max-width: 768px) {
+            header h1 { display: none; }
+            footer { flex-direction: column-reverse; gap: 1rem; padding: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div id="presentation-container">
+        <header><h1>Productividad con IA en Office</h1><div class="logo">pra<span>x</span>ia</div></header>
+        <div id="progress-bar"></div>
+        <main>
+            <div class="slides-wrapper">
+                
+                <section class="slide" id="title-slide" data-source="Material del Módulo 1" data-subtitle="Portada">
+                    <h2>Productividad en Office con ChatGPT 🚀</h2>
+                    <h3>Aprende a crear instrucciones que te ahorran horas</h3>
+                    <p class="subtitle">Basado en el Módulo 1: "Introducción a LLMs y Construcción de Prompts"</p>
+                </section>
+                
+                <section class="slide" data-source="Resumen Ejecutivo" data-subtitle="Introducción al Curso">
+                    <div class="special-note-icon">⭐</div>
+                    <h2>Un Resumen Especial para Ti</h2>
+                    <h3>Lo que verás es una guía práctica de la "Lectura 1", diseñada para que apliques estos conceptos <strong>hoy mismo</strong>.</h3>
+                </section>
+
+                <section class="slide" data-source="Lección 2, Pág. 9" data-subtitle="¿Cómo crear tu Prompt?">
+                    <h2>El Problema Común 🤔</h2>
+                    <h3>¿Por qué a veces ChatGPT nos da respuestas inútiles?</h3>
+                    <div class="comparison-grid">
+                        <div class="comparison-box before"><h4>❌ Antes (Prompt Vago)</h4><code>"Hazme un resumen de la reunión."</code></div>
+                        <div class="comparison-box after"><h4>✅ Después (Prompt Específico)</h4><code>"Actúa como mi asistente. Resume esta transcripción en 3 viñetas clave y lista las tareas asignadas."</code></div>
+                    </div>
+                </section>
+                
+                <section class="slide" data-source="Lección 2, Pág. 9" data-subtitle="Definición y componentes del proceso CETO">
+                    <h2>La Solución: El Método CETO 🔑</h2>
+                    <h3>Un método de 4 pasos para comunicarte como un experto con cualquier IA.</h3>
+                </section>
+                
+                <section class="slide ceto-slide" data-source="Lección 3, Pág. 16-17" data-subtitle="Aprende el proceso CETO: Contexto">
+                    <div class="two-column-layout">
+                        <div class="column"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M7.07,18.28C7.5,17.38 10.12,16.5 12,16.5C13.88,16.5 16.5,17.38 16.93,18.28C15.57,19.36 13.86,20 12,20C10.14,20 8.43,19.36 7.07,18.28M18.36,16.83C16.93,15.09 13.46,14.5 12,14.5C10.54,14.5 7.07,15.09 5.64,16.83C4.62,15.5 4,13.82 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,13.82 19.38,15.5 18.36,16.83M12,6C10.06,6 8.5,7.56 8.5,9.5C8.5,11.44 10.06,13 12,13C13.94,13 15.5,11.44 15.5,9.5C15.5,7.56 13.94,6 12,6Z"></path></svg><h4>1. Contexto</h4><p>Dale a la IA un rol o profesión. Transfórmala en el experto que necesitas.</p></div>
+                        <div class="column prompt-box"><p class="prompt-title">Ejemplo:</p><code><span>❌ "Ayúdame con las ventas."</span><br><br><strong>✅ "Actúa como un coach de ventas con 20 años de experiencia."</strong></code></div>
+                    </div>
+                </section>
+                
+                <section class="slide ceto-slide" data-source="Lección 3, Pág. 16-17" data-subtitle="Aprende el proceso CETO: Entrada">
+                    <div class="two-column-layout">
+                        <div class="column"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M19,19H5V5H19V19M17,17H7V15H17V17M17,13H7V11H17V13M17,9H7V7H17V9Z"></path></svg><h4>2. Entrada</h4><p>Proporciónale la materia prima: la información o datos con los que debe trabajar.</p></div>
+                        <div class="column prompt-box"><p class="prompt-title">Ejemplo:</p><code><span>❌ "Resume mi texto."</span><br><br><strong>✅ "Aquí tienes un informe de 5 páginas [pegar texto]. Basándote en él..."</strong></code></div>
+                    </div>
+                </section>
+                
+                <section class="slide ceto-slide" data-source="Lección 3, Pág. 16-17" data-subtitle="Aprende el proceso CETO: Transformación">
+                     <div class="two-column-layout">
+                        <div class="column"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19.43,12.98C19.5,12.67 19.5,12.34 19.5,12C19.5,11.66 19.5,11.33 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.65 15.48,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.52,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.21,8.95 2.27,9.22 2.46,9.37L4.57,11C4.5,11.33 4.5,11.66 4.5,12C4.5,12.34 4.5,12.67 4.57,13L2.46,14.63C2.27,14.78 2.21,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.52,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.48,18.68 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.98M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5Z"></path></svg><h4>3. Transformación</h4><p>Sé explícito con la ACCIÓN. Usa verbos claros: resume, analiza, crea, lista, reescribe.</p></div>
+                        <div class="column prompt-box"><p class="prompt-title">Ejemplo:</p><code><span>❌ "¿Qué piensas de estos datos?"</span><br><br><strong>✅ "Analiza estos datos de ventas y crea una tabla que compare el crecimiento trimestral."</strong></code></div>
+                    </div>
+                </section>
+                
+                <section class="slide ceto-slide" data-source="Lección 3, Pág. 16-17" data-subtitle="Aprende el proceso CETO: Objetivo">
+                    <div class="two-column-layout">
+                        <div class="column"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M11,15H13V17H11V15M11,7H13V13H11V7M12,2C6.47,2 2,6.5 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20Z"></path></svg><h4>4. Objetivo</h4><p>Describe el FORMATO de salida. Define el tono, la longitud y la audiencia.</p></div>
+                        <div class="column prompt-box"><p class="prompt-title">Ejemplo:</p><code><span>❌ "Escribe un correo."</span><br><br><strong>✅ "Redacta un correo amigable de 100 palabras para el equipo."</strong></code></div>
+                    </div>
+                </section>
+
+                <section class="slide" data-source="Lección 3, Pág. 18" data-subtitle="Aplica el proceso CETO para construir Prompts efectivos">
+                    <h2>CETO en Acción: El Prompt Completo ✅</h2>
+                    <h3>Así se ve cuando unes todas las piezas.</h3>
+                    <div class="prompt-box">
+                        <p class="prompt-title">✍️ El Prompt Perfecto:</p>
+                        <code>
+                            <span class="color-c">[C] Actúa como un director de proyectos senior.</span><br>
+                            <span class="color-e">[E] Aquí tienes mis notas desordenadas de la reunión de hoy: [Pegar notas].</span><br>
+                            <span class="color-t">[T] Extrae las decisiones clave y crea una lista de tareas con responsables.</span><br>
+                            <span class="color-o">[O] El resultado debe ser un email en viñetas, con tono profesional y claro.</span>
+                        </code>
+                    </div>
+                </section>
+                
+                <section class="slide" data-source="Lección 2, Pág. 12" data-subtitle="Ejemplos prácticos de aplicación del proceso CETO">
+                    <h2>DEMO 1: Tareas Básicas 💻</h2>
+                    <h3>Vamos a ver CETO en acción con Word y Excel.</h3>
+                    <div class="share-screen-note">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M20,18H4V6H20M20,4H4A2,2 0 0,0 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V6A2,2 0 0,0 20,4Z"></path></svg>
+                        <div class="note-text">
+                            <h4>¡Atención! Demostración en Vivo</h4>
+                            <p>Pausaré las diapositivas para compartir mi pantalla y realizar estos ejemplos en tiempo real.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="slide" data-source="Lección 2, Pág. 12" data-subtitle="Aplicación de CETO en Microsoft Word">
+                    <h2>Práctica Word: Resumir Reunión</h2>
+                    <h3>Problema: Tienes 10 páginas de notas y necesitas un resumen para tu jefe ¡YA!</h3>
+                </section>
+                
+                <section class="slide" data-source="Lección 2, Pág. 13" data-subtitle="CETO en Excel: Mejorando la Gestión de Datos">
+                    <h2>Práctica Excel: Entender Gastos</h2>
+                    <h3>Problema: Tienes una lista de 100 gastos y necesitas saber en qué 3 categorías gastas más.</h3>
+                </section>
+                 
+                <section class="slide" data-source="Lección 2, Pág. 13" data-subtitle="CETO en PowerPoint: Diseño de Presentaciones">
+                    <h2>Práctica PowerPoint: Vencer la Hoja en Blanco</h2>
+                    <h3>Problema: Tienes que hacer una presentación importante y no sabes ni por dónde empezar.</h3>
+                </section>
+                 
+                <section class="slide" data-source="Lección 4, Pág. 21" data-subtitle="Introducción a Técnicas Avanzadas">
+                    <h2>Técnicas Avanzadas 🚀</h2>
+                    <h3>Dos trucos para obtener resultados de nivel experto.</h3>
+                </section>
+
+                <section class="slide" data-source="Lección 4, Pág. 21" data-subtitle="Conceptos de Few-Shot">
+                    <h2>Avanzado 1: Dar Ejemplos ✨</h2>
+                    <h3>Si quieres un formato muy específico, la forma más rápida es mostrarle un ejemplo.</h3>
+                    <div class="prompt-box">
+                        <p class="prompt-title">🤖 Prompt con Ejemplo:</p>
+                        <code>Quiero que estandarices los nombres de clientes:<br><br><span class="color-e">Ejemplo: "acme inc" -> "Acme Inc."</span><br><br><span class="color-t">Ahora tú: "praxia soluciones" -> ?</span></code>
+                    </div>
+                </section>
+
+                <section class="slide" data-source="Lectura complementaria" data-subtitle="Prompting de Cadena de Pensamiento">
+                    <h2>Avanzado 2: Pedirle que "Piense" 🧠</h2>
+                    <h3>Para tareas complejas, pídele que razone paso a paso para obtener respuestas mucho más lógicas.</h3>
+                     <div class="prompt-box">
+                        <p class="prompt-title">🤖 Prompt con Razonamiento:</p>
+                        <code><span class="color-c">"Eres un consultor de logística."</span><br><span class="color-e">"Tenemos 3 proveedores... [detalles]."</span><br><span class="color-t">"¿Cuál es el mejor? <strong>Piensa paso a paso tu razonamiento antes de dar la respuesta final.</strong>"</span></code>
+                    </div>
+                </section>
+                 
+                <section class="slide" data-source="Lección 5, Pág. 30" data-subtitle="Integración de técnicas avanzadas">
+                    <h2>DEMO 2: Tareas Avanzadas ⚡</h2>
+                    <h3>Ahora, usemos estas nuevas técnicas en un caso real.</h3>
+                     <div class="share-screen-note">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M20,18H4V6H20M20,4H4A2,2 0 0,0 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V6A2,2 0 0,0 20,4Z"></path></svg>
+                        <div class="note-text">
+                            <h4>Segunda Demostración en Vivo</h4>
+                            <p>Volveré a compartir mi pantalla para mostrarles cómo combinar estas técnicas para resolver un problema más complejo.</p>
+                        </div>
+                    </div>
+                </section>
+                 
+                <section class="slide" data-source="Lección 5, Pág. 27" data-subtitle="Creación de Prompts Secuenciales">
+                    <h2>Práctica Avanzada: Crear una Campaña</h2>
+                    <h3>Problema: Necesitas crear una campaña de email simple, desde la idea hasta el texto final.</h3>
+                </section>
+                
+                <section class="slide">
+                    <h2>Resumen Final 💡</h2>
+                    <h3>Tus 3 Ideas Clave Para Hoy:</h3>
+                    <p>1. La calidad de tu petición (Prompt) determina la calidad de la respuesta.</p>
+                    <p style="font-size: 1.5rem; font-weight: 600;">2. Usa siempre el método <strong>CETO</strong> como tu mapa.</p>
+                    <p>3. Sé específico, da ejemplos y no tengas miedo de pedirle a la IA que piense paso a paso.</p>
+                </section>
+                
+                <section class="slide">
+                    <h2>Tu Turno: ¡El Reto Semanal! 🏆</h2>
+                    <h3>¿Qué tarea repetitiva vas a eliminar esta semana?</h3>
+                    <p>Elige UNA cosa que te quite tiempo y usa el método CETO para que ChatGPT te ayude a hacerla más rápido.</p>
+                    <p>¡El objetivo es recuperar tu tiempo!</p>
+                </section>
+                
+                <section class="slide">
+                    <h2>¿Preguntas?</h2>
+                    <h3>¡Muchas gracias!</h3>
+                </section>
+            </div>
+        </main>
+        <footer>
+            <div id="slide-counter"></div>
+            <div class="nav-buttons">
+                <button id="prev-btn">← Anterior</button>
+                <button id="next-btn">Siguiente →</button>
+            </div>
+        </footer>
+    </div>
+    <div id="source-toast"></div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const slidesWrapper = document.querySelector('.slides-wrapper');
+            const slides = document.querySelectorAll('.slide');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const progressBar = document.getElementById('progress-bar');
+            const slideCounter = document.getElementById('slide-counter');
+            const sourceToast = document.getElementById('source-toast');
+
+            let currentSlide = 0; const totalSlides = slides.length; let toastTimer;
+
+            function showSourceToast(source, subtitle) {
+                if (toastTimer) clearTimeout(toastTimer);
+                if (!source) { sourceToast.classList.remove('show'); return; }
+                
+                let toastText = `📖 Fuente: ${source}`;
+                if (subtitle) {
+                    toastText += ` - ${subtitle}`;
+                }
+                
+                sourceToast.innerHTML = toastText; // Use innerHTML to render bold tags if needed
+                sourceToast.classList.add('show');
+                toastTimer = setTimeout(() => { sourceToast.classList.remove('show'); }, 4000);
+            }
+
+            function updatePresentation() {
+                slidesWrapper.style.transform = `translateX(-${currentSlide * 100}%)`;
+                prevBtn.disabled = currentSlide === 0;
+                nextBtn.disabled = currentSlide === totalSlides - 1;
+                progressBar.style.width = `${((currentSlide + 1) / totalSlides) * 100}%`;
+                slideCounter.textContent = `Diapositiva ${currentSlide + 1} de ${totalSlides}`;
+                
+                const source = slides[currentSlide].dataset.source;
+                const subtitle = slides[currentSlide].dataset.subtitle;
+                showSourceToast(source, subtitle);
+            }
+
+            function goToNextSlide() { if (currentSlide < totalSlides - 1) { currentSlide++; updatePresentation(); } }
+            function goToPrevSlide() { if (currentSlide > 0) { currentSlide--; updatePresentation(); } }
+
+            nextBtn.addEventListener('click', goToNextSlide);
+            prevBtn.addEventListener('click', goToPrevSlide);
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); goToNextSlide(); }
+                else if (e.key === 'ArrowLeft') { e.preventDefault(); goToPrevSlide(); }
+            });
+            updatePresentation();
+        });
+    </script>
+</body>
+</html>
